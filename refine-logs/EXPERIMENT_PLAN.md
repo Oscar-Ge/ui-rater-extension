@@ -143,7 +143,7 @@ These are the only unresolved blockers to the stated claims.
 | F1 | The previous payload design recorded diagnosis condition in the single agent-visible input, so the repairer could be condition-aware. | Split neutral agent-visible `repair-input.json` from audit-only `run-manifest.json`; seal the mapping and use opaque variant IDs. | Any C1/C3 fairness claim |
 | F2 | The safe repair runner, frozen offline runtime, and isolation canaries are not implemented yet. | Implement the dedicated repair mode from a clean generator commit; pass offline build/test and all isolation canaries before R007/R008. | Any repair result |
 | F3 | Rejecting solution-leaking or schema-invalid diagnoses without a fixed outcome rule can create differential attrition. | Freeze the leakage rubric and intent-to-treat rule: formal diagnosis failures are not replaced and remain failures in the scheduled denominator. Only pre-execution infrastructure corruption may be rerun under a symmetric rule. | C1/C2 |
-| F4 | “At least three” repeats and “hierarchical summary” do not fix sample size, optional extension, run order, or the estimand. | Before formal data, freeze exact counts, pairing blocks, randomization, model/runtime fingerprint handling, one primary outcome, the analysis model, uncertainty interval, meaningful-effect threshold, and safety margin. | Formal C1/C2 |
+| F4 | “At least three” repeats and “hierarchical summary” do not fix sample size, optional extension, run order, or the estimand. | Before formal data, freeze exact counts, pairing blocks, randomization, condition-specific token/tool/time caps and stopping rules, model/runtime fingerprint handling, one primary outcome, the analysis model, uncertainty interval, meaningful-effect threshold, and safety margin. | Formal C1/C2 |
 | F5 | Fresh-task evaluation currently deploys only build/semantic-safe variants; comparing only survivors would bias results. | Use an intent-to-treat composite for the primary analysis: any scheduled build failure or frozen semantic-invariant failure receives a failed safe-repair outcome. Report deployment rate and survivor-conditional fresh-task metrics separately. | Formal C1/C2 |
 | F6 | “Condition labels hidden” is not yet an auditable blinding protocol. | Generate and seal an opaque variant key; strip condition-revealing paths/metadata; randomize scoring order; use two independent scorers; unblind after score lock. | Primary evaluator validity |
 | F7 | The pilot is verbally separated from claims but not yet separated from the confirmatory dataset. | Permanently mark the booking pilot and the same-participant ID case as development/descriptive cases. Do not include either in confirmatory estimates after any pilot outcome is inspected. Start formal collection on untouched attempts only. | Formal C1/C2 |
@@ -179,7 +179,7 @@ For each attempt:
 4. Freeze each valid diagnosis output before any corresponding repair.
 5. Randomize and interleave C1/C3 repair sessions within repair-replicate blocks.
 6. Start every repair from a newly materialized pristine source and empty per-run agent state.
-7. Record CLI version, backend endpoint, model identifier, model/system fingerprint when available, reasoning effort, runtime hash, timestamps, token use, wall time, and failures.
+7. Enforce the pre-registered condition-specific token/tool/time caps and stopping rules; record CLI version, backend endpoint, model identifier, model/system fingerprint when available, reasoning effort, runtime hash, timestamps, token use, wall time, and failures.
 8. Stop the batch if a backend or runtime version boundary occurs; resume only as a new blocked batch recorded in the analysis.
 
 No automatic retry is allowed after a valid model request begins. A retry is allowed only for a pre-declared infrastructure-invalid event that occurred before the model could receive the assigned input, and the same retry rule must apply to every condition.
@@ -262,7 +262,7 @@ Formal data collection begins only after the post-pilot lock records exact sampl
 3. **R002:** Freeze Method 3 with the same problem-only contract and canonical manifest.
 4. **R003–R006:** Freeze reference issues, evaluator assets, source allowlist/hash, offline runtime, C0 calibration, held-out feasibility, and safe repair isolation.
 5. **R007–R010:** Run the booking smoke pilot and descriptive blind evaluation. Preserve all failures. Do not select a winner.
-6. **R010F:** After the pilot, freeze the untouched formal sample/sampling rule, exact `A/P/S/D/R/U`, randomization blocks, model/runtime fingerprint rule, primary estimand, `delta`, `gamma`, and evaluator key.
+6. **R010F:** After the pilot, freeze the untouched formal sample/sampling rule, exact `A/P/S/D/R/U`, randomization blocks, condition-specific token/tool/time caps and stopping rules, model/runtime fingerprint rule, primary estimand, `delta`, `gamma`, and evaluator key.
 7. **R011:** Run the formal matched Method 1 versus Method 3 comparison on untouched cases.
 8. **R012:** Run the pre-registered Cg source + identical task-context baseline in the same formal batch.
 9. **R013–R015:** Run formal fresh-task evaluation and only then any descriptive second case or deferred ablation.
@@ -285,7 +285,7 @@ Formal data collection begins only after the post-pilot lock records exact sampl
 - [ ] Booking and ID cases marked development-only and excluded.
 - [ ] Untouched formal sampling frame or exact attempt list frozen.
 - [ ] Exact `A/P/S/D/R/U` frozen; no “at least” counts.
-- [ ] Interleaved matched run order and randomization key frozen.
+- [ ] Interleaved matched run order, randomization key, and condition-specific token/tool/time caps frozen.
 - [ ] Backend/model/runtime fingerprint policy frozen.
 - [ ] Primary endpoint, estimator, interval, `delta`, `gamma`, and decision rule frozen.
 - [ ] Intent-to-treat coding includes diagnosis failures and nondeployable repairs.
